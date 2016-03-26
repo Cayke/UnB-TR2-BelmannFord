@@ -23,6 +23,7 @@ using namespace std;
 int main(int argc, char** argv) {
     
     string fileName;
+    cout << "Digite nome do arquivo de entrada\n";
     cin >> fileName;
     
     std::vector<GraphNode> graph = assembleGraph(fileName);
