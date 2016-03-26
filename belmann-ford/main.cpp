@@ -22,8 +22,8 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     
-    string fileName = "teste.txt";
-    //cin >> fileName;
+    string fileName;
+    cin >> fileName;
     
     std::vector<GraphNode> graph = assembleGraph(fileName);
     printGraph(graph);
