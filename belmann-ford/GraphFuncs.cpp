@@ -47,8 +47,9 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
             exit(inconsistencyFile);
         }
         
-        
-        Utilities::SplitString(str, "-", out);
+        std::size_t found = str.find("-"); 
+        str.replace(found, 1, "@");
+        Utilities::SplitString(str, "@", out);
                 
         try{
             if(!Utilities::is_number(out->at(0), 10)){
