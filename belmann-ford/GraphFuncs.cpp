@@ -18,7 +18,7 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
     
     std::ifstream graphFile;
     std::string str;
-    bool node = true, conn = false, cost = false;
+    //bool node = true, conn = false, cost = false; //unused variables
     GraphNode n;
     GraphCon gc;
     std::vector<GraphNode> Nodes;
