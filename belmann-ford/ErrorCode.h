@@ -19,5 +19,8 @@
 
 #define stringError 2000
 
+#define bfElementNotFound 3000 
+
+
 #endif /* ERRORCODE_H */
 
