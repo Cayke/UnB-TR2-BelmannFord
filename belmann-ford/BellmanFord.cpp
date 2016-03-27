@@ -44,6 +44,35 @@ void bellman_ford(std::vector<GraphNode> graph, int sourceID)
     printDistanceTable(d);
     
     //relaxamento
+    for (int completeLaps = 0; completeLaps < d.size() -1; completeLaps++)
+    {
+        for (int i = 0; i < d.size(); i++)
+        {
+            GraphNode node = graph.at(i);
+            int origem = node.node;
+            for (std::vector<GraphCon>::iterator aresta = node.connec.begin(); aresta != node.connec.end(); ++aresta)
+            {
+                int destino = aresta->node;
+                if (aresta->cost == std::numeric_limits<int>::max() || distanceForNode(origem, d)== std::numeric_limits<int>::max())
+                {
+                    //nao faz nada
+                }
+                else
+                {
+                    if (distanceForNode(origem, d) + aresta->cost < distanceForNode(destino, d))
+                    {
+                        updateBFDistance(destino, origem, distanceForNode(origem, d) + aresta->cost, d);
+                    }
+                }
+            }
+            
+            //apagar
+            std::cout << "Iteracao " << completeLaps << " Node " << origem << "\n";
+            printDistanceTable(d);
+        }
+    }
+    
+    //check negative cicles
     for (int i = 0; i < d.size(); i++)
     {
         GraphNode node = graph.at(i);
@@ -53,14 +82,14 @@ void bellman_ford(std::vector<GraphNode> graph, int sourceID)
             int destino = aresta->node;
             if (distanceForNode(origem, d) + aresta->cost < distanceForNode(destino, d))
             {
-                updateBFDistance(destino, origem, distanceForNode(origem, d) + aresta->cost, d);
+                std::cout << "Erro ciclo negativo";
+                exit(negativeCicle);
             }
         }
-        
-        //apagar
-        std::cout << "Iteracao " << i << " Node " << origem << "\n";
-        printDistanceTable(d);
     }
+    
+    std::cout << "\n\n\n---------------------------------\nTabela de distancias Final\n";
+    printDistanceTable(d);
 }
 
 int distanceForNode(int node, std::vector<BFDistance *> d)
@@ -70,6 +99,9 @@ int distanceForNode(int node, std::vector<BFDistance *> d)
         BFDistance *element = d.at(i);
         if (element->nodeID == node)
         {
+            if (element->distance < 0) {
+                
+            }
             return element->distance;
         }
     }

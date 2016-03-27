@@ -19,7 +19,9 @@
 
 #define stringError 2000
 
-#define bfElementNotFound 3000 
+#define bfElementNotFound 3000
+
+#define negativeCicle 4000
 
 
 #endif /* ERRORCODE_H */

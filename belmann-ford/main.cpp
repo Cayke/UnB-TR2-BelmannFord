@@ -22,15 +22,14 @@ using namespace std;
  * 
  */
 int main(int argc, char** argv) {
+    string fileName;
+    cout << "Digite nome do arquivo de entrada\n";
+    cin >> fileName;
     
-//    string fileName;
-//    cout << "Digite nome do arquivo de entrada\n";
-//    cin >> fileName;
-    
-    std::vector<GraphNode> graph = assembleGraph("test_youtube.txt");
+    std::vector<GraphNode> graph = assembleGraph(fileName);
     printGraph(graph);
     
-    bellman_ford(graph, 10);
+    bellman_ford(graph, 1);
     
     return 0;
 }
