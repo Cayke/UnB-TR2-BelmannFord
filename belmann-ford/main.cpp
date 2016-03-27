@@ -26,10 +26,14 @@ int main(int argc, char** argv) {
     cout << "Digite nome do arquivo de entrada\n";
     cin >> fileName;
     
+    int source;
+    cout << "Digite numero do source\n";
+    cin >> source;
+    
     std::vector<GraphNode> graph = assembleGraph(fileName);
     printGraph(graph);
     
-    bellman_ford(graph, 1);
+    bellman_ford(graph, source);
     
     return 0;
 }

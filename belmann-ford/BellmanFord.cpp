@@ -40,8 +40,8 @@ void bellman_ford(std::vector<GraphNode> graph, int sourceID)
     }
     
     //apagar
-    std::cout << "\nAntes do relaxamento\n";
-    printDistanceTable(d);
+//    std::cout << "\nAntes do relaxamento\n";
+//    printDistanceTable(d);
     
     //relaxamento
     for (int completeLaps = 0; completeLaps < d.size() -1; completeLaps++)
@@ -67,8 +67,8 @@ void bellman_ford(std::vector<GraphNode> graph, int sourceID)
             }
             
             //apagar
-            std::cout << "Iteracao " << completeLaps << " Node " << origem << "\n";
-            printDistanceTable(d);
+//            std::cout << "Iteracao " << completeLaps << " Node " << origem << "\n";
+//            printDistanceTable(d);
         }
     }
     
