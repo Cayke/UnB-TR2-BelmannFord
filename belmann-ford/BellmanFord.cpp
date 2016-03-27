@@ -22,8 +22,8 @@ std::list<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, int 
     std::list<Path> pathRet;
     bool change = false;
     
-    for(int i = 0; i <= graph.size(); i++){
-        for(int j = 0; j < graph.size(); j++){
+    for(unsigned int i = 0; i <= graph.size(); i++){
+        for(unsigned int j = 0; j < graph.size(); j++){
             
             std::vector<Path>::iterator itCN = std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                 return item.node == graph.at(j).node;
@@ -31,7 +31,7 @@ std::list<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, int 
             
             int locateCurrentNode = std::distance( path.begin(), itCN);
             if(path.at(locateCurrentNode).cost != INF){
-                for(int k = 0; k < graph.at(j).connec.size(); k++){
+                for(unsigned int k = 0; k < graph.at(j).connec.size(); k++){
                     std::vector<Path>::iterator itNN =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                         return item.node == graph.at(j).connec.at(k).node;
                     });
