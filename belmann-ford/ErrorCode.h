@@ -19,5 +19,7 @@
 
 #define stringError 2000
 
+#define negativeCicle 3000
+
 #endif /* ERRORCODE_H */
 

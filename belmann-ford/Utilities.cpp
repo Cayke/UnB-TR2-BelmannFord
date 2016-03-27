@@ -28,11 +28,12 @@ void Utilities::SplitString(const std::string s, const char *delim, std::vector<
 
         char *dump = strdup(s.c_str());
         char *token = strtok(dump, delim);
-
+        
         while( token != NULL ){
             out->push_back(std::string(token));
             token = strtok(NULL, delim);
         }
+        
         free(dump);
         free(token);
     }
