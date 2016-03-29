@@ -1,25 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   BellmanFord.cpp
- * Author: igor
- * 
- * Created on March 26, 2016, 8:00 PM
- */
-
 #include "BellmanFord.h"
 #include "ErrorCode.h"
 #include <algorithm>
 #include <iostream>
 
-std::list<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, int dest) {
+std::vector<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, bool printInte = false) {
     
     std::vector<Path> path = initializePath(graph, source);
-    std::list<Path> pathRet;
+    
     bool change = false;
     
     for(unsigned int i = 0; i <= graph.size(); i++){
@@ -45,20 +32,37 @@ std::list<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, int 
             }            
         }
         if(i == graph.size() && change){
-            std::cout << "Negative Cicle\n";
+            std::cout << "\nNegative Cicle\n";
             exit(negativeCicle);
+        }if(!change){
+            if(printInte)std::cout << i << " interacoes de " << graph.size() - 1 << "\n";
+            break;
         }else{
             change = false;
         }
+        
+        
     }
     
+    return path;
+}
+
+std::list<Path> BellmanFord::assemblePath(std::vector<Path> path, int source, int dest){
+    
+    std::list<Path> pathRet;
+    
+    //Montando caminho para retorno
     std::vector<Path>::iterator it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                         return item.node == dest;
     });
     int icurrent = std::distance( path.begin(), it);
     
+    if(path.at(icurrent).cost == INF){
+        return pathRet;
+    }
+    
     it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                        return item.node == source;
+        return item.node == source;
     });
     int isource = std::distance( path.begin(), it);
     
@@ -77,10 +81,17 @@ std::list<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, int 
     return pathRet;
 }
 
-void BellmanFord::printPath(std::list<Path> path){
+void BellmanFord::printPath(std::vector<GraphNode> graph, int source, int dest){
+    
+    std::list<Path> path = BellmanFord::assemblePath(BellmanFord::path(graph, source, true), source, dest);
+    
+    if(path.empty()){
+        std::cout << "\nSem caminho\n";
+        return;
+    }
     
     while(!path.empty()){
-        std::cout << path.front().node;
+        std::cout << path.front().node << "[" << path.front().cost << "]";
         path.pop_front();
         if(!path.empty()){
             std::cout << " -> ";
@@ -90,6 +101,54 @@ void BellmanFord::printPath(std::list<Path> path){
     }
 }
 
+void BellmanFord::printMatrix(std::vector<GraphNode> graph){
+    
+    
+        std::cout << "\n|___|";
+        for(unsigned int i = 0; i < graph.size(); i++){
+            if(graph.at(i).node < 10){
+                std::cout << " " << graph.at(i).node << " |";      
+            }else if(graph.at(i).node < 100){
+                std::cout << graph.at(i).node << " |"; 
+            }else{
+                std::cout << graph.at(i).node << "|"; 
+            }  
+        }
+        std::cout << "\n";
+                
+        for(unsigned int i = 0; i < graph.size(); i++){
+            
+            if(graph.at(i).node < 10){
+                std::cout << "| ";
+                std::cout << graph.at(i).node << " |";
+            }else if(graph.at(i).node <100){
+                std::cout << "|";
+                std::cout << graph.at(i).node << " |";
+            }else{
+                std::cout << "|";
+                std::cout << graph.at(i).node << "|";
+            }
+            
+            for(unsigned int j = 0; j < graph.size(); j++){
+                std::list<Path> path = BellmanFord::assemblePath(BellmanFord::path(graph, graph.at(i).node), graph.at(i).node, graph.at(j).node);
+                if(path.empty()){
+                    std::cout << " I |"; 
+                }else{
+                    if(path.back().cost < 0){
+                        std::cout << path.back().cost << " |";
+                    }
+                    else if(path.back().cost < 10){
+                        std::cout << " " << path.back().cost << " |";      
+                    }else if(path.back().cost < 100){
+                        std::cout << path.back().cost << " |"; 
+                    }else{
+                        std::cout << path.back().cost << "|"; 
+                    }    
+                }
+            }
+            std::cout << "\n";
+        }
+}
 
 std::vector<Path> BellmanFord::initializePath(std::vector<GraphNode> graph, int source){
     
@@ -97,7 +156,7 @@ std::vector<Path> BellmanFord::initializePath(std::vector<GraphNode> graph, int 
     
     for(int i = 0; i < graph.size(); i++){
         Path p;
-        if(i + 1 == source){
+        if(graph.at(i).node == source){
             p.cost = 0;
         }else{
             p.cost = INF;
