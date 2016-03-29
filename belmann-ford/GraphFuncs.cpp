@@ -1,10 +1,3 @@
-/* 
- * File:   GraphFuncs.cpp
- * Author: igor
- * 
- * Created on March 25, 2016, 4:56 AM
- */
-
 #include "GraphFuncs.h"
 #include "GraphCon.h"
 #include "ErrorCode.h"
@@ -18,7 +11,6 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
     
     std::ifstream graphFile;
     std::string str;
-    //bool node = true, conn = false, cost = false; //unused variables
     GraphNode n;
     GraphCon gc;
     std::vector<GraphNode> Nodes;
@@ -66,7 +58,8 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
                 
         Utilities::SplitString(out->at(1), ";", outaux);
         out->clear();
-        for(int i = 0; i < outaux->size(); i++){
+        
+        for(unsigned int i = 0; i < outaux->size(); i++){
             Utilities::SplitString(outaux->at(i), "[", out);
             gc.node = std::stoi(out->at(0));
             out->at(1).erase(remove(out->at(1).begin(), out->at(1).end(), ']'), out->at(1).end());

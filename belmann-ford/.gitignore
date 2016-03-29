@@ -2,3 +2,4 @@
 /Makefile
 /teste.txt
 /Projeto\ TR2\ Bellman-Ford.xcodeproj/
+*.o

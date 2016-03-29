@@ -5,17 +5,23 @@
  */
 
 /* 
- * File:   Structs.h
+ * File:   Path.h
  * Author: igor
  *
- * Created on March 25, 2016, 4:06 AM
+ * Created on March 27, 2016, 6:20 AM
  */
 
-#ifndef STRUCTS_H
-#define STRUCTS_H
+#ifndef PATH_H
+#define PATH_H
 
-#define INF 999999999
+class Path {
+public:
+    
+    int node;
+    int from;
+    int cost;
 
+};
 
-#endif /* STRUCTS_H */
+#endif /* PATH_H */
 
