@@ -19,6 +19,7 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
         graphFile.open(fileName.c_str(), std::ifstream::in);
     }catch(const std::ios_base::failure& e){
         std::cerr << e.what() << '\n';
+        std::cout << "Erro ao abrir arquivo\n";
         exit(openfileError);
     }
     
@@ -39,12 +40,18 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
             exit(inconsistencyFile);
         }
         
+        str.erase(remove(str.begin(), str.end(), ' '), str.end());
         std::size_t found = str.find("-"); 
+        if(found == std::string::npos){
+            std::cout << "Inconsistency file: Missing '-' separator";
+            exit(inconsistencyFile);
+        }
         str.replace(found, 1, "@");
         Utilities::SplitString(str, "@", out);
                 
         try{
             if(!Utilities::is_number(out->at(0), 10)){
+                std::cout << "Inconsistency file:" << out->at(0) << "not a number";
                 exit(inconsistencyFile);
             }
         }catch(const std::out_of_range& e){
@@ -60,8 +67,8 @@ std::vector<GraphNode> assembleGraph(std::string fileName){
         out->clear();
         
         for(unsigned int i = 0; i < outaux->size(); i++){
-            Utilities::SplitString(outaux->at(i), "[", out);
-            gc.node = std::stoi(out->at(0));
+            Utilities::SplitString(outaux->at(i), "[", out);         
+            gc.node = std::stoi(out->at(0));           
             out->at(1).erase(remove(out->at(1).begin(), out->at(1).end(), ']'), out->at(1).end());
             gc.cost = std::stoi(out->at(1));
             n.connec.push_back(gc);
@@ -85,10 +92,5 @@ void printNode(GraphNode node){
     }
     
     std::cout << '\n';
-}
-
-void printGraph(std::vector<GraphNode> graph){
-
-    std::for_each(graph.begin(), graph.end(), printNode);
 }
 

@@ -9,12 +9,17 @@ std::vector<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, bo
     
     bool change = false;
     
-    for(unsigned int i = 0; i <= graph.size(); i++){
+    for(unsigned int i = 0; i < graph.size(); i++){
         for(unsigned int j = 0; j < graph.size(); j++){
             
             std::vector<Path>::iterator itCN = std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                 return item.node == graph.at(j).node;
             });
+            
+            if(itCN == path.end()){
+                std::cout << "Node " << graph.at(j).node << " does not exist\n";
+                exit(nodenotfound);
+            }
             
             int locateCurrentNode = std::distance( path.begin(), itCN);
             if(path.at(locateCurrentNode).cost != INF){
@@ -22,6 +27,12 @@ std::vector<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, bo
                     std::vector<Path>::iterator itNN =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                         return item.node == graph.at(j).connec.at(k).node;
                     });
+                    
+                    if(itNN == path.end()){
+                        std::cout << "Node " << graph.at(j).connec.at(k).node << " does not exist\n";
+                        exit(nodenotfound);
+                    }
+                    
                     int locateNextNode = std::distance( path.begin(), itNN);
                     if(path.at(locateCurrentNode).cost + graph.at(j).connec.at(k).cost < path.at(locateNextNode).cost){
                         path.at(locateNextNode).cost = path.at(locateCurrentNode).cost + graph.at(j).connec.at(k).cost;
@@ -31,11 +42,12 @@ std::vector<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, bo
                 }               
             }            
         }
-        if(i == graph.size() && change){
-            std::cout << "\nNegative Cicle\n";
+        if(i == (graph.size()-1) && change){
+            if(printInte)std::cout << i + 1 << " interacoes de " << graph.size() - 1 << "\n";
+            std::cout << "Negative Cicle\n";
             exit(negativeCicle);
         }if(!change){
-            if(printInte)std::cout << i << " interacoes de " << graph.size() - 1 << "\n";
+            if(printInte)std::cout << i + 1 << " interacoes de " << graph.size() - 1 << "\n";
             break;
         }else{
             change = false;
@@ -52,9 +64,15 @@ std::list<Path> BellmanFord::assemblePath(std::vector<Path> path, int source, in
     std::list<Path> pathRet;
     
     //Montando caminho para retorno
-    std::vector<Path>::iterator it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
+    std::vector<Path>::iterator it = std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
                         return item.node == dest;
     });
+    
+    if(it == path.end()){
+        std::cout << "Node " << dest << " does not exist\n";
+        exit(nodenotfound);
+    }
+    
     int icurrent = std::distance( path.begin(), it);
     
     if(path.at(icurrent).cost == INF){
@@ -64,6 +82,12 @@ std::list<Path> BellmanFord::assemblePath(std::vector<Path> path, int source, in
     it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
         return item.node == source;
     });
+    
+    if(it == path.end()){
+        std::cout << "Node " << source << " does not exist\n";
+        exit(nodenotfound);
+    }
+    
     int isource = std::distance( path.begin(), it);
     
     while(icurrent != isource){
