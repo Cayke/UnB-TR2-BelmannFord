@@ -14,6 +14,7 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+#define INF 999999999
 
 
 #endif /* STRUCTS_H */

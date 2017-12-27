@@ -26,6 +26,7 @@ public:
     
     static void SplitString(const std::string s, const char *delim, std::vector<std::string> *out);
     
+    
 };
 
 #endif /* UTILITIES_H */

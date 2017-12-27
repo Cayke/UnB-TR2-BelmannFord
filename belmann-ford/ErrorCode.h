@@ -14,10 +14,11 @@
 #ifndef ERRORCODE_H
 #define ERRORCODE_H
 
-#define openfileError 1000
-#define inconsistencyFile 1001
+#define openfileError 100
+#define inconsistencyFile 101
 
-#define stringError 2000
+#define stringError 200
+
 
 #define bfElementNotFound 3000
 

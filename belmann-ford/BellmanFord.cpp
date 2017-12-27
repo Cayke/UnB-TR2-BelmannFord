@@ -129,4 +129,5 @@ void printDistanceTable(std::vector<BFDistance *> d)
         BFDistance *element = d.at(i);
         std::cout << element->nodeID << ' ' << element->distance << ' ' << element->beforeNode << '\n';
     }
+
 }
