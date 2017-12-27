@@ -1,196 +1,133 @@
-#include "BellmanFord.h"
-#include "ErrorCode.h"
-#include <algorithm>
+//
+//  BellmanFord.cpp
+//  Projeto TR2 Bellman-Ford
+//
+//  Created by Cayke Prudente on 26/03/16.
+//  Copyright © 2016 Cayke Prudente. All rights reserved.
+//
+
+#include <stdio.h>
+#include <limits>
 #include <iostream>
+#include "BellmanFord.h"
+#include "BellmanFordDistance.h"
+#include "ErrorCode.h"
 
-std::vector<Path> BellmanFord::path(std::vector<GraphNode> graph, int source, bool printInte = false) {
+int distanceForNode(int node, std::vector<BFDistance *> d);
+void updateBFDistance(int node, int beforeNode, int distance, std::vector<BFDistance *> d);
+void printDistanceTable(std::vector<BFDistance *> d);
+
+void bellman_ford(std::vector<GraphNode> graph, int sourceID)
+{
+    std::vector<BFDistance *> d;
     
-    std::vector<Path> path = initializePath(graph, source);
-    
-    bool change = false;
-    
-    for(unsigned int i = 0; i < graph.size(); i++){
-        for(unsigned int j = 0; j < graph.size(); j++){
-            
-            std::vector<Path>::iterator itCN = std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                return item.node == graph.at(j).node;
-            });
-            
-            if(itCN == path.end()){
-                std::cout << "Node " << graph.at(j).node << " does not exist\n";
-                exit(nodenotfound);
-            }
-            
-            int locateCurrentNode = std::distance( path.begin(), itCN);
-            if(path.at(locateCurrentNode).cost != INF){
-                for(unsigned int k = 0; k < graph.at(j).connec.size(); k++){
-                    std::vector<Path>::iterator itNN =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                        return item.node == graph.at(j).connec.at(k).node;
-                    });
-                    
-                    if(itNN == path.end()){
-                        std::cout << "Node " << graph.at(j).connec.at(k).node << " does not exist\n";
-                        exit(nodenotfound);
-                    }
-                    
-                    int locateNextNode = std::distance( path.begin(), itNN);
-                    if(path.at(locateCurrentNode).cost + graph.at(j).connec.at(k).cost < path.at(locateNextNode).cost){
-                        path.at(locateNextNode).cost = path.at(locateCurrentNode).cost + graph.at(j).connec.at(k).cost;
-                        path.at(locateNextNode).from = graph.at(j).node;
-                        change = true;
-                    } 
-                }               
-            }            
+    //init
+    for (std::vector<GraphNode>::iterator node = graph.begin(); node != graph.end(); ++node)
+    {
+        BFDistance *element = new BFDistance();
+        element->nodeID = node->node;
+        element->beforeNode = -1;
+        if (element->nodeID == sourceID)
+        {
+            element->distance = 0;
         }
-        if(i == (graph.size()-1) && change){
-            if(printInte)std::cout << i + 1 << " interacoes de " << graph.size() - 1 << "\n";
-            std::cout << "Negative Cicle\n";
-            exit(negativeCicle);
-        }if(!change){
-            if(printInte)std::cout << i + 1 << " interacoes de " << graph.size() - 1 << "\n";
-            break;
-        }else{
-            change = false;
+        else
+        {
+            element->distance = std::numeric_limits<int>::max();
         }
         
-        
+        d.push_back(element);
     }
     
-    return path;
-}
-
-std::list<Path> BellmanFord::assemblePath(std::vector<Path> path, int source, int dest){
+    //apagar
+//    std::cout << "\nAntes do relaxamento\n";
+//    printDistanceTable(d);
     
-    std::list<Path> pathRet;
-    
-    //Montando caminho para retorno
-    std::vector<Path>::iterator it = std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                        return item.node == dest;
-    });
-    
-    if(it == path.end()){
-        std::cout << "Node " << dest << " does not exist\n";
-        exit(nodenotfound);
-    }
-    
-    int icurrent = std::distance( path.begin(), it);
-    
-    if(path.at(icurrent).cost == INF){
-        return pathRet;
-    }
-    
-    it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-        return item.node == source;
-    });
-    
-    if(it == path.end()){
-        std::cout << "Node " << source << " does not exist\n";
-        exit(nodenotfound);
-    }
-    
-    int isource = std::distance( path.begin(), it);
-    
-    while(icurrent != isource){
-        pathRet.push_front(path.at(icurrent));
-        it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                        return item.node == path.at(icurrent).from;
-        });
-        icurrent = std::distance( path.begin(), it);
-    }
-    it =  std::find_if(path.begin(), path.end(), [=](Path item) {//lambda
-                        return item.node == source;
-    });
-    
-    pathRet.push_front(path.at(icurrent));
-    return pathRet;
-}
-
-void BellmanFord::printPath(std::vector<GraphNode> graph, int source, int dest){
-    
-    std::list<Path> path = BellmanFord::assemblePath(BellmanFord::path(graph, source, true), source, dest);
-    
-    if(path.empty()){
-        std::cout << "\nSem caminho\n";
-        return;
-    }
-    
-    while(!path.empty()){
-        std::cout << path.front().node << "[" << path.front().cost << "]";
-        path.pop_front();
-        if(!path.empty()){
-            std::cout << " -> ";
-        }else{
-            std::cout << "\n";
-        }
-    }
-}
-
-void BellmanFord::printMatrix(std::vector<GraphNode> graph){
-    
-    
-        std::cout << "\n|___|";
-        for(unsigned int i = 0; i < graph.size(); i++){
-            if(graph.at(i).node < 10){
-                std::cout << " " << graph.at(i).node << " |";      
-            }else if(graph.at(i).node < 100){
-                std::cout << graph.at(i).node << " |"; 
-            }else{
-                std::cout << graph.at(i).node << "|"; 
-            }  
-        }
-        std::cout << "\n";
-                
-        for(unsigned int i = 0; i < graph.size(); i++){
-            
-            if(graph.at(i).node < 10){
-                std::cout << "| ";
-                std::cout << graph.at(i).node << " |";
-            }else if(graph.at(i).node <100){
-                std::cout << "|";
-                std::cout << graph.at(i).node << " |";
-            }else{
-                std::cout << "|";
-                std::cout << graph.at(i).node << "|";
-            }
-            
-            for(unsigned int j = 0; j < graph.size(); j++){
-                std::list<Path> path = BellmanFord::assemblePath(BellmanFord::path(graph, graph.at(i).node), graph.at(i).node, graph.at(j).node);
-                if(path.empty()){
-                    std::cout << " I |"; 
-                }else{
-                    if(path.back().cost < 0){
-                        std::cout << path.back().cost << " |";
+    //relaxamento
+    for (int completeLaps = 0; completeLaps < d.size() -1; completeLaps++)
+    {
+        for (int i = 0; i < d.size(); i++)
+        {
+            GraphNode node = graph.at(i);
+            int origem = node.node;
+            for (std::vector<GraphCon>::iterator aresta = node.connec.begin(); aresta != node.connec.end(); ++aresta)
+            {
+                int destino = aresta->node;
+                if (aresta->cost == std::numeric_limits<int>::max() || distanceForNode(origem, d)== std::numeric_limits<int>::max())
+                {
+                    //nao faz nada
+                }
+                else
+                {
+                    if (distanceForNode(origem, d) + aresta->cost < distanceForNode(destino, d))
+                    {
+                        updateBFDistance(destino, origem, distanceForNode(origem, d) + aresta->cost, d);
                     }
-                    else if(path.back().cost < 10){
-                        std::cout << " " << path.back().cost << " |";      
-                    }else if(path.back().cost < 100){
-                        std::cout << path.back().cost << " |"; 
-                    }else{
-                        std::cout << path.back().cost << "|"; 
-                    }    
                 }
             }
-            std::cout << "\n";
+            
+            //apagar
+//            std::cout << "Iteracao " << completeLaps << " Node " << origem << "\n";
+//            printDistanceTable(d);
         }
-}
-
-std::vector<Path> BellmanFord::initializePath(std::vector<GraphNode> graph, int source){
-    
-    std::vector<Path> path;
-    
-    for(int i = 0; i < graph.size(); i++){
-        Path p;
-        if(graph.at(i).node == source){
-            p.cost = 0;
-        }else{
-            p.cost = INF;
-        }
-        
-        p.node = graph.at(i).node;
-        p.from = -1;
-        
-        path.push_back(p);
     }
     
-    return path;
+    //check negative cicles
+    for (int i = 0; i < d.size(); i++)
+    {
+        GraphNode node = graph.at(i);
+        int origem = node.node;
+        for (std::vector<GraphCon>::iterator aresta = node.connec.begin(); aresta != node.connec.end(); ++aresta)
+        {
+            int destino = aresta->node;
+            if (distanceForNode(origem, d) + aresta->cost < distanceForNode(destino, d))
+            {
+                std::cout << "Erro ciclo negativo";
+                exit(negativeCicle);
+            }
+        }
+    }
+    
+    std::cout << "\n\n\n---------------------------------\nTabela de distancias Final\n";
+    printDistanceTable(d);
+}
+
+int distanceForNode(int node, std::vector<BFDistance *> d)
+{
+    for (int i = 0; i < d.size(); i++)
+    {
+        BFDistance *element = d.at(i);
+        if (element->nodeID == node)
+        {
+            if (element->distance < 0) {
+                
+            }
+            return element->distance;
+        }
+    }
+    exit(bfElementNotFound);
+}
+
+void updateBFDistance(int node, int beforeNode, int distance, std::vector<BFDistance *> d)
+{
+    for (int i = 0; i < d.size(); i++)
+    {
+        BFDistance *element = d.at(i);
+        if (element->nodeID == node)
+        {
+            element->beforeNode = beforeNode;
+            element->distance = distance;
+            break;
+        }
+    }
+}
+
+void printDistanceTable(std::vector<BFDistance *> d)
+{
+    for (int i = 0; i < d.size(); i++)
+    {
+        BFDistance *element = d.at(i);
+        std::cout << element->nodeID << ' ' << element->distance << ' ' << element->beforeNode << '\n';
+    }
+
 }

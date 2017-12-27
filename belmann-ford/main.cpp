@@ -11,12 +11,16 @@
 #include <algorithm>
 
 int main(int argc, char** argv) {
+
+    string fileName;
+    cout << "Digite nome do arquivo de entrada\n";
+    cin >> fileName;
     
-    std::string fileName = "test.txt";
-    int source = 1, dest = 4, op = 2;
+    int source;
+    cout << "Digite numero do source\n";
+    cin >> source;
     
-    std::cout << "Digite nome do arquivo de entrada\n";
-    std::cin >> fileName;
+
     std::vector<GraphNode> graph = assembleGraph(fileName);
             
     std::cout << "1->Caminho de fonte ao destino\n";
@@ -38,6 +42,8 @@ int main(int argc, char** argv) {
             BellmanFord::printMatrix(graph);
     }
     //printGraph(graph);
+    
+    bellman_ford(graph, source);
     
     return 0;
 }

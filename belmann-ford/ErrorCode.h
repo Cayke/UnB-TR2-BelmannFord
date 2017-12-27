@@ -19,8 +19,11 @@
 
 #define stringError 200
 
-#define negativeCicle 300
 
-#define nodenotfound 400
+#define bfElementNotFound 3000
+
+#define negativeCicle 4000
+
+
 #endif /* ERRORCODE_H */
 
